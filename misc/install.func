@@ -2,7 +2,7 @@
 # Author: tteck (tteckster)
 # Co-Author: MickLesk
 # License: MIT
-# https://github.com/community-scripts/ProxmoxVE/raw/main/LICENSE
+# https://github.com/oOStroudyOo/ProxmoxVE/raw/main/LICENSE
 
 # This function sets color variables for formatting output in the terminal
 color() {
@@ -224,9 +224,9 @@ motd_ssh() {
   if [ -f "$MOTD_FILE" ]; then
     # Start MOTD with application info and link
     echo -e "\n${TAB2}${BOLD}${GD}${APPLICATION} LXC Container${CL}\n" > "$MOTD_FILE"
-    echo -e "${TAB}${ORG}${YW} Provided by: ${GN}community-scripts ORG${CL}" >> "$MOTD_FILE"
+    echo -e "${TAB}${ORG}${YW} Provided by: ${GN}oOStroudyOo ORG${CL}" >> "$MOTD_FILE"
     echo -e "${TAB}${GATEWAY}${YW} Web: ${GN}https://helper-scripts.com/${CL}" >> "$MOTD_FILE"
-    echo -e "${TAB}${GITHUB}${YW} GitHub: ${GN}https://github.com/community-scripts/ProxmoxVE${CL}\n" >> "$MOTD_FILE"
+    echo -e "${TAB}${GITHUB}${YW} GitHub: ${GN}https://github.com/oOStroudyOo/ProxmoxVE${CL}\n" >> "$MOTD_FILE"
 
     # Add system information with icons
     echo -e "${TAB}${OS}${YW} OS: ${GN}${OS_NAME} - Version: ${OS_VERSION}${CL}" >> "$MOTD_FILE"
@@ -260,6 +260,6 @@ EOF
     systemctl restart $(basename $(dirname $GETTY_OVERRIDE) | sed 's/\.d//')
     msg_ok "Customized Container"
   fi
-  echo "bash -c \"\$(wget -qLO - https://github.com/community-scripts/ProxmoxVE/raw/main/ct/${app}.sh)\"" >/usr/bin/update
+  echo "bash -c \"\$(wget -qLO - https://github.com/oOStroudyOo/ProxmoxVE/raw/main/ct/${app}.sh)\"" >/usr/bin/update
   chmod +x /usr/bin/update
 }
