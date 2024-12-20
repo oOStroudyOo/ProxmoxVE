@@ -2,7 +2,7 @@
 source <(curl -s https://raw.githubusercontent.com/oOStroudyOo/ProxmoxVE/login-messages/misc/build.func)
 # Copyright (c) 2021-2024 tteck
 # Author: tteck (tteckster)
-# License: MIT | https://github.com/oOStroudyOo/ProxmoxVE/raw/main/LICENSE
+# License: MIT | https://github.com/oOStroudyOo/ProxmoxVE/raw/login-messages/LICENSE
 # Source: https://www.debian.org/
 
 # App Default Values
