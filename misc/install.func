@@ -20,7 +20,7 @@ color() {
   BOLD=$(echo "\033[1m")
   HOLD=" "
   TAB="  "
-  TA2B="        "
+  TAB2="        "
   
   # System
   RETRY_NUM=10
