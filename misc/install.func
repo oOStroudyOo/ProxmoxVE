@@ -20,7 +20,7 @@ color() {
   BOLD=$(echo "\033[1m")
   HOLD=" "
   TAB="  "
-  TAB2="        "
+  TABS="        "
   
   # System
   RETRY_NUM=10
@@ -223,7 +223,7 @@ motd_ssh() {
   MOTD_FILE="/etc/motd"
   if [ -f "$MOTD_FILE" ]; then
     # Start MOTD with application info and link
-    echo -e "\n${TAB2}${BOLD}${GD}${APPLICATION} LXC Container${CL}\n" > "$MOTD_FILE"
+    echo -e "\n${TABS}${BOLD}${GD}${APPLICATION} LXC Container${CL}\n" > "$MOTD_FILE"
     echo -e "${TAB}${ORG}${YW} Provided by: ${GN}community-scripts ORG${CL}" >> "$MOTD_FILE"
     echo -e "${TAB}${GATEWAY}${YW} Web: ${GN}https://helper-scripts.com/${CL}" >> "$MOTD_FILE"
     echo -e "${TAB}${GITHUB}${YW} GitHub: ${GN}https://github.com/community-scripts/ProxmoxVE${CL}\n" >> "$MOTD_FILE"
