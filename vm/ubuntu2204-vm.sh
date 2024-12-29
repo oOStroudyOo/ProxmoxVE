@@ -137,6 +137,7 @@ function default_settings() {
   HN="ubuntu"
   CPU_TYPE=""
   CORE_COUNT="2"
+  STORAGE_SIZE="8"
   RAM_SIZE="2048"
   BRG="vmbr0"
   MAC="$GEN_MAC"
@@ -149,6 +150,7 @@ function default_settings() {
   echo -e "${DGN}Using Hostname: ${BGN}${HN}${CL}"
   echo -e "${DGN}Using CPU Model: ${BGN}KVM64${CL}"
   echo -e "${DGN}Allocated Cores: ${BGN}${CORE_COUNT}${CL}"
+  echo -e "${DGN}Allocated Storage Space: ${BGN}${STORAGE_SIZE}${CL}"
   echo -e "${DGN}Allocated RAM: ${BGN}${RAM_SIZE}${CL}"
   echo -e "${DGN}Using Bridge: ${BGN}${BRG}${CL}"
   echo -e "${DGN}Using MAC Address: ${BGN}${MAC}${CL}"
@@ -241,6 +243,17 @@ function advanced_settings() {
       echo -e "${DGN}Allocated Cores: ${BGN}$CORE_COUNT${CL}"
     else
       echo -e "${DGN}Allocated Cores: ${BGN}$CORE_COUNT${CL}"
+    fi
+  else
+    exit-script
+  fi
+
+  if STORAGE_SIZE=$(whiptail --backtitle "Proxmox VE Helper Scripts" --inputbox "Allocate Storage Space in GiB" 8 58 8 --title "STORAGE" --cancel-button Exit-Script 3>&1 1>&2 2>&3); then
+    if [ -z $STORAGE_SIZE ]; then
+      STORAGE_SIZE="8"
+      echo -e "${DGN}Allocated Storage Space: ${BGN}$STORAGE_SIZE${CL}"
+    else
+      echo -e "${DGN}Allocated Storage Space: ${BGN}$STORAGE_SIZE${CL}"
     fi
   else
     exit-script
@@ -411,12 +424,38 @@ qm set $VMID \
   -ide2 ${STORAGE}:cloudinit \
   -boot order=scsi0 \
   -serial0 socket \
-  -description "<div align='center'><a href='https://Helper-Scripts.com'><img src='https://raw.githubusercontent.com/community-scripts/ProxmoxVE/develop/misc/images/logo-81x112.png'/></a>
+qm resize $VMID scsi0 ${STORAGE_SIZE}G >/dev/null
+  DESCRIPTION=$(cat <<EOF
+<div align='center'>
+  <a href='https://Helper-Scripts.com' target='_blank' rel='noopener noreferrer'>
+    <img src='https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/misc/images/logo-81x112.png' alt='Logo' style='width:81px;height:112px;'/>
+  </a>
 
-  # Ubuntu 22.04 VM
+  <h2 style='font-size: 24px; margin: 20px 0;'>Ubuntu 22.04 VM</h2>
 
-  <a href='https://ko-fi.com/D1D7EP4GF'><img src='https://img.shields.io/badge/&#x2615;-Buy me a coffee-blue' /></a>
-  </div>" >/dev/null
+  <p style='margin: 16px 0;'>
+    <a href='https://ko-fi.com/community_scripts' target='_blank' rel='noopener noreferrer'>
+      <img src='https://img.shields.io/badge/&#x2615;-Buy us a coffee-blue' alt='spend Coffee' />
+    </a>
+  </p>
+  
+  <span style='margin: 0 10px;'>
+    <i class="fa fa-github fa-fw" style="color: #f5f5f5;"></i>
+    <a href='https://github.com/community-scripts/ProxmoxVE' target='_blank' rel='noopener noreferrer' style='text-decoration: none; color: #00617f;'>GitHub</a>
+  </span>
+  <span style='margin: 0 10px;'>
+    <i class="fa fa-comments fa-fw" style="color: #f5f5f5;"></i>
+    <a href='https://github.com/community-scripts/ProxmoxVE/discussions' target='_blank' rel='noopener noreferrer' style='text-decoration: none; color: #00617f;'>Discussions</a>
+  </span>
+  <span style='margin: 0 10px;'>
+    <i class="fa fa-exclamation-circle fa-fw" style="color: #f5f5f5;"></i>
+    <a href='https://github.com/community-scripts/ProxmoxVE/issues' target='_blank' rel='noopener noreferrer' style='text-decoration: none; color: #00617f;'>Issues</a>
+  </span>
+</div>
+EOF
+)
+  qm set "$VMID" -description "$DESCRIPTION" >/dev/null
+  
 msg_ok "Created a Ubuntu 22.04 VM ${CL}${BL}(${HN})"
 if [ "$START_VM" == "yes" ]; then
   msg_info "Starting Ubuntu 22.04 VM"
