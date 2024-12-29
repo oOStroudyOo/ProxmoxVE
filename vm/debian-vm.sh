@@ -248,7 +248,7 @@ function advanced_settings() {
     exit-script
   fi
 
-  if STORAGE_SIZE=$(whiptail --backtitle "Proxmox VE Helper Scripts" --inputbox "Allocate Storage Space in GiB" 8 58 8 --title "STORAGE" --cancel-button Exit-Script 3>&1 1>&2 2>&3); then
+  if STORAGE_SIZE=$(whiptail --backtitle "Proxmox VE Helper Scripts" --inputbox "Allocate Storage Space in GiB" 8 58 8 --title "STORAGE SIZE" --cancel-button Exit-Script 3>&1 1>&2 2>&3); then
     if [ -z $STORAGE_SIZE ]; then
       STORAGE_SIZE="8"
       echo -e "${DGN}Allocated Storage Space: ${BGN}$STORAGE_SIZE${CL}"
@@ -454,6 +454,7 @@ qm resize $VMID scsi0 ${STORAGE_SIZE}G >/dev/null
 EOF
 )
   qm set "$VMID" -description "$DESCRIPTION" >/dev/null
+  
 msg_ok "Created a Debian 12 VM ${CL}${BL}(${HN})"
 if [ "$START_VM" == "yes" ]; then
   msg_info "Starting Debian 12 VM"
