@@ -47,7 +47,7 @@ $STD npm install
 $STD npm run build
 cd ~
 echo "${RELEASE}" >"/opt/5etools_version.txt"
-rm "${RELEASE}.zip"
+rm "~/${RELEASE}.zip"
 msg_ok "Set up 5etools Base"
 
 msg_info "Set up 5etools Image"
