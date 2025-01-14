@@ -18,15 +18,43 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: Get changed files
-      id: changes
+      id: changed-files
+      uses: tj-actions/changed-files@v45
+      with:
+        files: |
+          **.sh
+
+    - name: Download ShellCheck
+      shell: bash
+      env:
+        INPUT_VERSION: "v0.10.0"
       run: |
-        if ${{ github.event_name == 'pull_request' }}; then
-          echo "files=$(git diff --name-only -r HEAD^1 HEAD | xargs)" >> $GITHUB_OUTPUT
+        set -euo pipefail
+        if [[ "${{ runner.os }}" == "macOS" ]]; then
+          osvariant="darwin"
         else
-          echo "files=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} | xargs)" >> $GITHUB_OUTPUT
+          osvariant="linux"
         fi
 
-    - name: Run ShellCheck
-      if: steps.changes.outputs.files != ''
+        baseurl="https://github.com/koalaman/shellcheck/releases/download"
+        curl -Lso "${{ github.workspace }}/sc.tar.xz" \
+          "${baseurl}/${INPUT_VERSION}/shellcheck-${INPUT_VERSION}.${osvariant}.x86_64.tar.xz"
+
+        tar -xf "${{ github.workspace }}/sc.tar.xz" -C "${{ github.workspace }}"
+        mv "${{ github.workspace }}/shellcheck-${INPUT_VERSION}/shellcheck" \
+          "${{ github.workspace }}/shellcheck"
+
+    - name: Verify ShellCheck binary
       run: |
-        echo "${{ steps.changes.outputs.files }}" | xargs shellcheck
+        ls -l "${{ github.workspace }}/shellcheck"
+
+    - name: Display ShellCheck version
+      run: |
+        "${{ github.workspace }}/shellcheck" --version
+
+    - name: Run ShellCheck
+      if: steps.changed-files.outputs.any_changed == 'true'
+      env:
+        ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
+      run: |
+        echo "${ALL_CHANGED_FILES}" | xargs "${{ github.workspace }}/shellcheck"

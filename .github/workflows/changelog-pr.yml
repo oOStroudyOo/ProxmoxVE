@@ -71,7 +71,9 @@ jobs:
             });
 
             pulls.filter((pr) => 
-              pr.merged_at && new Date(pr.merged_at) > latestDateInChangelog
+              pr.merged_at && 
+              new Date(pr.merged_at) > latestDateInChangelog && 
+              !pr.labels.some((label) => ["invalid", "wontdo", process.env.AUTOMATED_PR_LABEL].includes(label.name.toLowerCase()))
             ).forEach((pr) => {
               const prLabels = pr.labels.map((label) => label.name.toLowerCase());
               const prNote = `- ${pr.title} [@${pr.user.login}](https://github.com/${pr.user.login}) ([#${pr.number}](${pr.html_url}))`;
@@ -79,12 +81,11 @@ jobs:
               for (const { labels, notes } of categorizedPRs) {
                 const prHasCategoryLabel = labels.some((label) => prLabels.includes(label));
                 const isUnlabelledCategory = labels.length === 0;
-                const prShouldBeExcluded = prLabels.includes(process.env.AUTOMATED_PR_LABEL);
-                if ((prHasCategoryLabel || isUnlabelledCategory) && !prShouldBeExcluded) {
+                if (prHasCategoryLabel || isUnlabelledCategory) {
                   notes.push(prNote);
                   break;
                 }
-              };
+              }
             });
 
             return categorizedPRs;
@@ -149,6 +150,16 @@ jobs:
           fi
 
       - name: Approve pull request
+        if: steps.verify-diff.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER=$(gh pr list --head "${BRANCH_NAME}" --json number --jq '.[].number')
+          if [ -n "$PR_NUMBER" ]; then
+            gh pr review $PR_NUMBER --approve
+          fi
+          
+      - name: Re-approve pull request after update
         if: steps.verify-diff.outputs.changed == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
